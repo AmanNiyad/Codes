@@ -1,0 +1,8 @@
+sayHello = do
+    putStrLn("Aman")
+    putStrLn("Niyad")
+
+main = do
+    putStrLn("Hi")
+    sayHello
+
