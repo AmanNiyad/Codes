@@ -1,0 +1,19 @@
+#include<stdio.h>
+void avgmaxmin(int *x,int *y){
+    int max,min;
+    float avg;
+    max=(*x>*y)? *x:*y;
+    printf("The maximum of the two numbers is %d\n",max);
+    min=(*x<*y)? *x:*y;
+    printf("The minimum of the two numbers is %d\n",min);
+    avg=((*x)+(*y))/2.0;
+    printf("The average of the two numbers is %f\n",avg);
+}
+int main(){
+    int a,b;
+    printf("Enter two numbers:\n");
+    scanf("%d%d",&a,&b);
+    avgmaxmin(&a,&b);
+
+    return 0;
+}
