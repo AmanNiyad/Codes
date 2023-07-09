@@ -1,0 +1,22 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0e3c0;
+  margin: 0;
+}
+
+h1 {
+  font-size: 40px;
+  margin: 0;
+}
+
+.info h2 {
+  color: #ff6600;
+  font-size: 30px;
+  margin-top: 0;
+}
+
+.info ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
