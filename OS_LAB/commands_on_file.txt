@@ -1,0 +1,10 @@
+grep-> search command in a line
+
+wc-> to count line, wordm character in a file
+
+rm-> remove file
+
+chmod -> chnge mode of a file
+
+head-> prnt top 10 lines of a file
+tail-> prnt last 10 lines of a file
