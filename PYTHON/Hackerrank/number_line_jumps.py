@@ -20,12 +20,18 @@ import sys
 def kangaroo(x1, v1, x2, v2):
     if((x1>x2 and v1>v2) or (x2>x1 and v2>v1)):
         return "NO"
-    n=1
-    while(True):
-        if((x1+n*v1)==(x2+n*v2)):
-            return "YES"
-        n+=1
-    return "NO"
+    elif(((x2-x1)>0 and (v1-v2)>0) and ((x2-x1)%(v1-v2))==0):
+        return "YES"
+    elif(((x1-x2)>0 and (v2-v1)>0) and ((x1-x2)%(v2-v1))==0):
+        return "YES"
+    else:
+        return "NO"
+    #n=1
+    #while(True):
+    #    if((x1+n*v1)==(x2+n*v2)):
+    #        return "YES"
+    #    n+=1
+    #return "NO"
 
 if __name__ == '__main__':
     #fptr = open(os.environ['OUTPUT_PATH'], 'w')
