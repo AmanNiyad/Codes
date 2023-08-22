@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 void merge(int arr_438[], int l, int mid, int h){
     int i, j, k;
@@ -68,7 +69,12 @@ int main(){
     printf("MAIN MENU\n1. Ascending Data\n2.Descending Data\n3.Random Data\n4.ERROR(Exit)");
     scanf("%d",&opt);
     FILE* fp;
-
+    
+    //time
+    clock_t start,stop;
+    double time;
+    
+    start = clock();
 
     if(opt==1){
         int count=0;
@@ -146,4 +152,10 @@ int main(){
     mergeSort(arr_38,0,size,size);
     printArr(arr_38,size);
     }
+
+    
+    stop = clock();
+    time=(double)stop - (double)start;
+    printf("Time taken = %.f\n",time);
+
 }    
