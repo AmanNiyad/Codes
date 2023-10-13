@@ -1,5 +1,7 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtCore
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 from PIL import Image
 import glob
 
@@ -7,28 +9,33 @@ import glob
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1241, 939)
+        MainWindow.resize(1920, 1080)
         self.currentImagePos = 0
         self.image_list = []
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setAlignment(Qt.AlignCenter)
 
-        self.label.setGeometry(QtCore.QRect(0, 0, 1241, 741))
+        self.label.setGeometry(QtCore.QRect(0, 10, 1920, 950))
         self.label.setObjectName("label")
 
         self.button1 = QtWidgets.QPushButton(self.centralwidget)
-        self.button1.setGeometry(QtCore.QRect(430, 800, 101, 61))
+        self.button1.setGeometry(QtCore.QRect(310, 975, 100, 45))
         self.button1.setObjectName("button1")
 
         self.button2 = QtWidgets.QPushButton(self.centralwidget)
-        self.button2.setGeometry(QtCore.QRect(670, 800, 101, 61))
+        self.button2.setGeometry(QtCore.QRect(1510, 975, 100, 45))
         self.button2.setObjectName("button2")
+
+        self.button3 = QtWidgets.QPushButton(self.centralwidget)
+        self.button3.setGeometry(QtCore.QRect(900, 975, 100, 45))
+        self.button3.setObjectName("button3")
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1241, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1980, 18))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -36,6 +43,7 @@ class Ui_MainWindow(object):
 
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
+        self.statusbar.setVisible(False)
         MainWindow.setStatusBar(self.statusbar)
 
         self.actionImport = QtWidgets.QAction(MainWindow)
@@ -47,41 +55,57 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.actionImport.triggered.connect(lambda: self.importImages())
+
         self.button1.clicked.connect(lambda: self.prevImage())
         self.button2.clicked.connect(lambda: self.nextImage())
+        self.button3.clicked.connect(lambda: self.showPopupCritical("This is a trial"))
+
+    def showPopupCritical(self, message):
+        msg = QMessageBox()
+        msg.setWindowTitle("ERROR!")
+        msg.setText(message)
+        msg.setInformativeText("Import files to begin viewing.")
+        msg.setDetailedText("Press Ctrl+O or look at the \"File\" menu to import files.")
+        msg.setIcon(QMessageBox.Critical)
+        msg.setStandardButtons(QMessageBox.Ok)
+
+        x = msg.exec_()
 
     def importImages(self):
+        self.folderpath = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Folder')
+        ext = 'jpg'
         self.image_list = [filename for i in
-                          [glob.glob('/home/aman/Pictures/Wallpapers/*.%s' %ext)
+                          [glob.glob(self.folderpath + '/*.%s' %ext)
                            for ext in ["jpg", "png", "jpeg", "tiff", "arw"]]for filename in i]
-
         self.numberOfFiles = len(self.image_list)
 
     def nextImage(self):
-        if (self.currentImagePos >= 0 and self.currentImagePos + 1 < self.numberOfFiles):
-            self.currentImagePos += 1
-        elif (self.currentImagePos + 1 >= self.numberOfFiles):
-            self.currentImagePos = 0
+        try:
+            if (self.currentImagePos >= 0 and self.currentImagePos + 1 < self.numberOfFiles):
+                self.currentImagePos += 1
+            elif (self.currentImagePos + 1 >= self.numberOfFiles):
+                self.currentImagePos = 0
 
-        self.currentImage = self.image_list[self.currentImagePos]
-        self.pixmap = QPixmap(self.currentImage)
-        self.label.setPixmap(self.pixmap)
-        self.label.resize(self.pixmap.width(), self.pixmap.height())
+            self.currentImage = self.image_list[self.currentImagePos]
+            self.pixmap = QPixmap(self.currentImage)
+            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.KeepAspectRatio))
+        except AttributeError:
+            self.showPopupCritical("No input files.")
 
     def prevImage(self):
-        if (self.currentImagePos == 0):
-            self.currentImagePos = self.numberOfFiles - 1
-        elif (self.currentImagePos <= self.numberOfFiles - 1  and self.currentImagePos > 0):
-            self.currentImagePos -= 1
-        elif (self.currentImagePos - 1 >= self.numberOfFiles):
-            self.currentImagePos = 0
+        try:
+            if (self.currentImagePos == 0):
+                self.currentImagePos = self.numberOfFiles - 1
+            elif (self.currentImagePos <= self.numberOfFiles - 1  and self.currentImagePos > 0):
+                self.currentImagePos -= 1
+            elif (self.currentImagePos - 1 >= self.numberOfFiles):
+                self.currentImagePos = 0
 
-        self.currentImage = self.image_list[self.currentImagePos]
-        self.pixmap = QPixmap(self.currentImage)
-        self.label.setPixmap(self.pixmap)
-        self.label.resize(self.pixmap.width(), self.pixmap.height())
-
-
+            self.currentImage = self.image_list[self.currentImagePos]
+            self.pixmap = QPixmap(self.currentImage)
+            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.KeepAspectRatio))
+        except AttributeError:
+            self.showPopupCritical("No input files.")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -94,7 +118,7 @@ class Ui_MainWindow(object):
         self.button1.setStatusTip(_translate("MainWindow", "Previous Image"))
         self.button2.setText(_translate("MainWindow", "Next"))
         self.button2.setStatusTip(_translate("MainWindow", "Next Image"))
-
+        self.button3.setText(_translate("MainWindow", "Edit"))
 
 
 if __name__ == "__main__":
