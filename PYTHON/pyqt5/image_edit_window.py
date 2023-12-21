@@ -1,10 +1,9 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, QtCore
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
-from PIL import Image
+from PyQt6 import QtCore, QtGui, QtWidgets, QtCore
+from PyQt6.QtGui import QPixmap, QAction
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMessageBox
 import glob
-
+import editor2
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -16,7 +15,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         self.label.setGeometry(QtCore.QRect(0, 10, 1920, 950))
         self.label.setObjectName("label")
@@ -46,7 +45,7 @@ class Ui_MainWindow(object):
         self.statusbar.setVisible(False)
         MainWindow.setStatusBar(self.statusbar)
 
-        self.actionImport = QtWidgets.QAction(MainWindow)
+        self.actionImport = QAction(MainWindow)
         self.actionImport.setObjectName("actionImport")
         self.menuFile.addAction(self.actionImport)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -58,7 +57,7 @@ class Ui_MainWindow(object):
 
         self.button1.clicked.connect(lambda: self.prevImage())
         self.button2.clicked.connect(lambda: self.nextImage())
-        self.button3.clicked.connect(lambda: self.showPopupCritical("This is a trial"))
+        self.button3.clicked.connect(lambda: self.editWindow(MainWindow))
 
     def showPopupCritical(self, message):
         msg = QMessageBox()
@@ -66,18 +65,18 @@ class Ui_MainWindow(object):
         msg.setText(message)
         msg.setInformativeText("Import files to begin viewing.")
         msg.setDetailedText("Press Ctrl+O or look at the \"File\" menu to import files.")
-        msg.setIcon(QMessageBox.Critical)
-        msg.setStandardButtons(QMessageBox.Ok)
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
 
-        x = msg.exec_()
+        x = msg.exec()
 
     def importImages(self):
         self.folderpath = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Folder')
-        ext = 'jpg'
         self.image_list = [filename for i in
                           [glob.glob(self.folderpath + '/*.%s' %ext)
                            for ext in ["jpg", "png", "jpeg", "tiff", "arw"]]for filename in i]
         self.numberOfFiles = len(self.image_list)
+        self.nextImage()
 
     def nextImage(self):
         try:
@@ -88,7 +87,7 @@ class Ui_MainWindow(object):
 
             self.currentImage = self.image_list[self.currentImagePos]
             self.pixmap = QPixmap(self.currentImage)
-            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.KeepAspectRatio))
+            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.AspectRatioMode.KeepAspectRatio))
         except AttributeError:
             self.showPopupCritical("No input files.")
 
@@ -103,9 +102,16 @@ class Ui_MainWindow(object):
 
             self.currentImage = self.image_list[self.currentImagePos]
             self.pixmap = QPixmap(self.currentImage)
-            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.KeepAspectRatio))
+            self.label.setPixmap(self.pixmap.scaled(self.label.width(),self.label.height(),QtCore.Qt.AspectRatioMode.KeepAspectRatio))
         except AttributeError:
             self.showPopupCritical("No input files.")
+
+    def editWindow(self, MainWindow):
+        try:
+            editor = editor2.Ui_MainWindow()
+            editor.setupUi(MainWindow, self.currentImage)
+        except AttributeError:
+            self.showPopupCritical("No image to edit!")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -119,7 +125,7 @@ class Ui_MainWindow(object):
         self.button2.setText(_translate("MainWindow", "Next"))
         self.button2.setStatusTip(_translate("MainWindow", "Next Image"))
         self.button3.setText(_translate("MainWindow", "Edit"))
-
+    
 
 if __name__ == "__main__":
     import sys
@@ -128,4 +134,4 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

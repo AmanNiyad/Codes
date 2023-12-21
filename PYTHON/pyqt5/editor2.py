@@ -4,32 +4,25 @@ from PIL import Image, ImageEnhance
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1080)
+    def setupUi(self, MainWindow, im):
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.Brigthness_value = 1
+        self.Brightness_value = 1
         self.Contrast_value = 1
         self.Vibrance_value = 1
         self.Sharpness_value = 1
 
         self.font = QtGui.QFont()
-        self.font.setFamily("Iosevka Nerd Font Mono")
-        self.font.setPointSize(11)
-        self.font.setBold(False)
-        self.font.setItalic(False)
-        self.font.setWeight(50)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.setAppFont()
 
-        im = "F2004.jpg"
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(0,20,1600,1000))
 
         self.image = Image.open(im)
         self.pixmap = QPixmap(im)
-        self.label.setPixmap(self.pixmap)
-        self.label.resize(self.pixmap.width(), self.pixmap.height())
+        self.label.setPixmap(self.pixmap.scaled(self.label.width(), self.label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio))
 
         self.edit_panel = QtWidgets.QWidget(self.centralwidget)
         self.edit_panel.setGeometry(QtCore.QRect(1620, 10, 200, 1000))
@@ -67,9 +60,16 @@ class Ui_MainWindow(object):
         self.Vibrance_scroll.valueChanged.connect(lambda: self.vibranceChanged())
         self.Sharpness_scroll.valueChanged.connect(lambda: self.sharpnessChanged())
 
+    def setAppFont(self):
+        self.font.setFamily("Iosevka Nerd Font Mono")
+        self.font.setPointSize(11)
+        self.font.setBold(False)
+        self.font.setItalic(False)
+        self.font.setWeight(50)
+
     def setupBrightness(self):
         self.Brightness = QtWidgets.QLabel(self.edit_panel)
-        self.Brightness.setGeometry(QtCore.QRect(30, 250, 91, 16))
+        self.Brightness.setGeometry(QtCore.QRect(30, 250, 90, 15))
         self.Brightness.setFont(self.font)
         self.Brightness.setObjectName("Brightness")
 
@@ -82,12 +82,12 @@ class Ui_MainWindow(object):
         self.Brightness_scroll.setValue(1000)
 
         self.Brightness_input_box = QtWidgets.QDoubleSpinBox(self.edit_panel)
-        self.Brightness_input_box.setGeometry(QtCore.QRect(130, 250, 62, 22))
+        self.Brightness_input_box.setGeometry(QtCore.QRect(130, 250, 60, 20))
         self.Brightness_input_box.setObjectName("Brightness_input_box")
 
     def setupContrast(self):
         self.Contrast = QtWidgets.QLabel(self.edit_panel)
-        self.Contrast.setGeometry(QtCore.QRect(30, 360, 91, 16))
+        self.Contrast.setGeometry(QtCore.QRect(30, 360, 90, 15))
         self.Contrast.setFont(self.font)
         self.Contrast.setObjectName("Contrast")
 
@@ -100,12 +100,12 @@ class Ui_MainWindow(object):
         self.Contrast_scroll.setValue(1000)
 
         self.Contrast_input_box = QtWidgets.QDoubleSpinBox(self.edit_panel)
-        self.Contrast_input_box.setGeometry(QtCore.QRect(130, 360, 62, 22))
+        self.Contrast_input_box.setGeometry(QtCore.QRect(130, 360, 60, 20))
         self.Contrast_input_box.setObjectName("Contrast_input_box")
 
     def setupVibrance(self):
         self.Vibrance = QtWidgets.QLabel(self.edit_panel)
-        self.Vibrance.setGeometry(QtCore.QRect(30, 470, 91, 16))
+        self.Vibrance.setGeometry(QtCore.QRect(30, 470, 90, 15))
         self.Vibrance.setFont(self.font)
         self.Vibrance.setObjectName("Vibrance")
 
@@ -118,12 +118,12 @@ class Ui_MainWindow(object):
         self.Vibrance_scroll.setValue(1000)
 
         self.Vibrance_input_box = QtWidgets.QDoubleSpinBox(self.edit_panel)
-        self.Vibrance_input_box.setGeometry(QtCore.QRect(130, 470, 62, 22))
+        self.Vibrance_input_box.setGeometry(QtCore.QRect(130, 470, 60, 20))
         self.Vibrance_input_box.setObjectName("Vibrance_input_box")
 
     def setupSharpness(self):
         self.Sharpness = QtWidgets.QLabel(self.edit_panel)
-        self.Sharpness.setGeometry(QtCore.QRect(30, 580, 91, 16))
+        self.Sharpness.setGeometry(QtCore.QRect(30, 580, 90, 15))
         self.Sharpness.setFont(self.font)
         self.Sharpness.setObjectName("Sharpness")
 
@@ -136,7 +136,7 @@ class Ui_MainWindow(object):
         self.Sharpness_scroll.setValue(1000)
 
         self.Sharpness_input_box = QtWidgets.QDoubleSpinBox(self.edit_panel)
-        self.Sharpness_input_box.setGeometry(QtCore.QRect(130, 580, 62, 22))
+        self.Sharpness_input_box.setGeometry(QtCore.QRect(130, 580, 60, 20))
         self.Sharpness_input_box.setObjectName("Sharpness_input_box")
 
     def brightnessChanged(self):
@@ -173,7 +173,7 @@ class Ui_MainWindow(object):
         data = im2.tobytes("raw", "RGBA")
         qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format.Format_ARGB32)
         pixmap = QtGui.QPixmap.fromImage(qim)
-        self.label.setPixmap(pixmap)
+        self.label.setPixmap(pixmap.scaled(self.label.width(), self.label.height(), QtCore.Qt.AspectRatioMode.KeepAspectRatio))
 
     def updateImg(self):
         brightness_enhancer = ImageEnhance.Brightness(self.image)
@@ -191,6 +191,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.Brightness.setText(_translate("MainWindow", "Brightness"))
         self.Contrast.setText(_translate("MainWindow", "Contrast"))
+        self.Vibrance.setText(_translate("MainWindow", "Vibrance"))
+        self.Sharpness.setText(_translate("MainWindow", "Sharpness"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
