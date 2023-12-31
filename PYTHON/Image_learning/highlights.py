@@ -39,10 +39,11 @@ shadows = image.point(lambda i: whatever(i))
 image = image.convert('HSV')
 
 lut = np.asarray(image, dtype = int)
+transpose = lut.T[2]
+threshold = np.max(transpose)
 print(lut.T[2])
 
-lut.T[2] = lut.T[2] + 10
-
+lut.T[2] = [[j-30 if j<threshold/2 else j for j in i] for i in transpose]
 image_new = Image.fromarray(lut.astype('uint8'), mode = 'HSV')
 image_new = image_new.convert('RGB')
 image_new.save('output.jpg')
