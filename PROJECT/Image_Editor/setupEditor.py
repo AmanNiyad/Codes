@@ -341,7 +341,7 @@ class editor(object):
         if(self.currentContrastValue != self.previousContrastValue):
             contrast_enhancer = ImageEnhance.Contrast(image_copy)
             image_copy = contrast_enhancer.enhance(self.currentContrastValue)
-            self.previousContrastValue = self.currentContrastValue
+            #self.previousContrastValue = self.currentContrastValue
 
         self.pil2pixmap(image_copy)
         #self.image = image_copy
