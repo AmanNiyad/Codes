@@ -137,6 +137,7 @@ class editor(object):
         self.brightnessUpdated = True
 
         self.side_Menu_Pos = 1
+        self.updateCounter = 1
 
         """
         Operation Codes:
@@ -300,25 +301,29 @@ class editor(object):
         self.ui.cropButton.setEnabled(True)
 
     def pil2pixmap(self):
-        avg = (self.lut1 + self.lut2)/2
-        im = Image.fromarray(avg.astype('uint8'), mode = 'HSV')
-        im = im.convert('RGB')
-        if im.mode == "RGB":
-            r, g, b = im.split()
-            im = Image.merge("RGB", (b, g, r))
-        elif im.mode == "RGBA":
-            r, g, b, a = im.split()
-            im = Image.merge("RGBA", (b, g, r, a))
-        elif im.mode == "L":
-            im = im.convert("RGBA")
-        im2 = im.convert("RGBA")
-        data = im2.tobytes("raw", "RGBA")
-        qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format.Format_ARGB32)
-        self.pixmap = QtGui.QPixmap.fromImage(qim)
-        self.scene.removeItem(self.scene_img)
-        self.scene_img = self.scene.addPixmap(self.pixmap)
-        self.ui.gv.ensureVisible(self.scene_img)
-        #QtCore.QTimer.singleShot(0, self.handle_timeout)
+        if (self.updateCounter == 7):
+            avg = (self.lut1 + self.lut2)/2
+            im = Image.fromarray(avg.astype('uint8'), mode = 'HSV')
+            im = im.convert('RGB')
+            if im.mode == "RGB":
+                r, g, b = im.split()
+                im = Image.merge("RGB", (b, g, r))
+            elif im.mode == "RGBA":
+                r, g, b, a = im.split()
+                im = Image.merge("RGBA", (b, g, r, a))
+            elif im.mode == "L":
+                im = im.convert("RGBA")
+            im2 = im.convert("RGBA")
+            data = im2.tobytes("raw", "RGBA")
+            qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format.Format_ARGB32)
+            self.pixmap = QtGui.QPixmap.fromImage(qim)
+            self.scene.removeItem(self.scene_img)
+            self.scene_img = self.scene.addPixmap(self.pixmap)
+            self.ui.gv.ensureVisible(self.scene_img)
+            #QtCore.QTimer.singleShot(0, self.handle_timeout)
+        else:
+            self.updateCounter += 1
+
         """
 
         image_new = Image.fromarray(self.lut1.astype('uint8'), mode = 'HSV')
