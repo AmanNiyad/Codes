@@ -149,8 +149,9 @@ class editor(object):
         self.cachedResults = {1: None, 2: None, 3: None, 4: None}
 
         self.image = self.image.convert('HSV')
-        self.lut1 = np.asarray(self.image, dtype = float)
         self.lut_main = np.asarray(self.image, dtype = float)
+        self.lut1 = self.lut_main.copy()
+        self.lut2 = self.lut_main.copy()
 
         self.ui.toggleMenuButton.clicked.connect(lambda: self.side_Menu_Def_0())
         self.ui.brightnessSlider.valueChanged.connect(lambda: self.brightnessChanged())
@@ -209,29 +210,30 @@ class editor(object):
         return (self.zoom_factor)
 
     def brightnessChanged(self):
-        self.currentBrightnessValue = self.ui.brightnessSlider.value()        #self.currentContrastValue = self.ui.contrastSlider.value()/1000
-        print(self.currentBrightnessValue)
+        self.currentBrightnessValue = self.ui.brightnessSlider.value()/10        #self.currentContrastValue = self.ui.contrastSlider.value()/1000
         #brightness_enhancer = ImageEnhance.Brightness(self.image)
         #image_copy = brightness_enhancer.enhance(self.Brightness_value)
 
         #self.pil2pixmap(image_copy)
-        self.lut1[..., 2] = self.lut_main[..., 2]
+        self.lut1[..., 2] = self.lut_main[..., 2].copy()
 
         self.lut1[..., 2] = np.clip(self.lut1[..., 2] + self.currentBrightnessValue, 0, 255)
 
-        self.previousBrightnessValue = self.currentBrightnessValue
+        #self.previousBrightnessValue = self.currentBrightnessValue
 
         self.pil2pixmap()
-        self.ui.brightnessInputBox.setValue(self.ui.brightnessSlider.value())
+        self.ui.brightnessInputBox.setValue(self.ui.brightnessSlider.value()/10)
 
     def contrastChanged(self):
-        #self.currentBrightnessValue = self.ui.brightnessSlider.value()/1000
-        #self.currentContrastValue = self.ui.contrastSlider.value()/1000
-        #contrast_enhancer = ImageEnhance.Contrast(self.image)
+        self.currentContrastValue = self.ui.contrastSlider.value()/20      #contrast_enhancer = ImageEnhance.Contrast(self.image)
         #image_copy = contrast_enhancer.enhance(self.Contrast_value)
+
+        self.lut2[..., 2] = self.lut_main[..., 2].copy()
+        self.lut2[..., 2] = np.clip(128 + self.currentContrastValue * self.lut1[...,2] - self.currentContrastValue * 128, 0, 255).astype(np.uint8)
+
         #self.pil2pixmap(image_copy)
-        self.updateImg()
-        self.ui.contrastInputBox.setValue(self.ui.contrastSlider.value()/1000)
+        self.pil2pixmap()
+        self.ui.contrastInputBox.setValue(self.ui.contrastSlider.value())
 
     def vibranceChanged(self):
         #self.Vibrance_value = self.ui.vibranceSlider.value()/1000
@@ -298,7 +300,8 @@ class editor(object):
         self.ui.cropButton.setEnabled(True)
 
     def pil2pixmap(self):
-        im = Image.fromarray(self.lut1.astype('uint8'), mode = 'HSV')
+        avg = (self.lut1 + self.lut2)/2
+        im = Image.fromarray(avg.astype('uint8'), mode = 'HSV')
         im = im.convert('RGB')
         if im.mode == "RGB":
             r, g, b = im.split()
