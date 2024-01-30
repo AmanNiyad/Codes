@@ -3,9 +3,6 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-def index1(response):
-    return(HttpResponse("<h1>This is a test</h1>"))
+def index1(response, id):
+    return(HttpResponse("<h1>This is a test %s</h1>" % id))
 
-
-def index2(response):
-    return(HttpResponse("<h1>This is not a  test</h1>"))
