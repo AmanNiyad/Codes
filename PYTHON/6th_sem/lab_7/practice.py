@@ -1,0 +1,17 @@
+import pandas as pd
+
+df = pd.read_csv('Automobile.csv - Automobile.csv.csv')
+# print(df.to_string())
+# print(df.shape)
+# print(df.ndim)
+# print(df.size)
+# print(df.columns)
+# print(df.head())
+# print(df.tail())
+# print(df['make'].unique())
+# print(df['make'].value_counts())
+# print(df['make'].value_counts(normalize=True))
+# print(df[df['horsepower']>100])
+# print(df.loc[df['horsepower'].idxmax()])
+print(df.isnull().any(axis=0))
+print(df[df.isnull().any(axis=1)])
